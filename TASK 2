@@ -1,0 +1,127 @@
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class BankingSystem {
+    // User storage (username -> balance)
+    private HashMap<String, String> users = new HashMap<>();
+    private HashMap<String, Double> balances = new HashMap<>();
+
+    // Register a new user
+    public void register(String username, String password) {
+        if (users.containsKey(username)) {
+            System.out.println("Username already exists!");
+        } else {
+            users.put(username, password);
+            balances.put(username, 0.0); // Default balance is 0
+            System.out.println("Registration successful!");
+        }
+    }
+
+    // Login a user
+    public boolean login(String username, String password) {
+        if (users.containsKey(username) && users.get(username).equals(password)) {
+            System.out.println("Login successful!");
+            return true;
+        } else {
+            System.out.println("Invalid username or password!");
+            return false;
+        }
+    }
+
+    // Deposit money
+    public void deposit(String username, double amount) {
+        if (amount > 0) {
+            balances.put(username, balances.get(username) + amount);
+            System.out.println("Deposit successful! New balance: " + balances.get(username));
+        } else {
+            System.out.println("Invalid deposit amount!");
+        }
+    }
+
+    // Withdraw money
+    public void withdraw(String username, double amount) {
+        if (amount > 0 && balances.get(username) >= amount) {
+            balances.put(username, balances.get(username) - amount);
+            System.out.println("Withdrawal successful! New balance: " + balances.get(username));
+        } else {
+            System.out.println("Insufficient balance or invalid amount!");
+        }
+    }
+
+    // Check balance
+    public void checkBalance(String username) {
+        System.out.println("Your current balance is: " + balances.get(username));
+    }
+
+    // Main method
+    public static void main(String[] args) {
+        BankingSystem bankingSystem = new BankingSystem();
+        Scanner scanner = new Scanner(System.in);
+        String currentUser = null;
+
+        while (true) {
+            if (currentUser == null) {
+                System.out.println("\n1. Register");
+                System.out.println("2. Login");
+                System.out.println("3. Exit");
+                System.out.print("Choose an option: ");
+                int choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+                switch (choice) {
+                    case 1:
+                        System.out.print("Enter username: ");
+                        String regUsername = scanner.nextLine();
+                        System.out.print("Enter password: ");
+                        String regPassword = scanner.nextLine();
+                        bankingSystem.register(regUsername, regPassword);
+                        break;
+                    case 2:
+                        System.out.print("Enter username: ");
+                        String loginUsername = scanner.nextLine();
+                        System.out.print("Enter password: ");
+                        String loginPassword = scanner.nextLine();
+                        if (bankingSystem.login(loginUsername, loginPassword)) {
+                            currentUser = loginUsername;
+                        }
+                        break;
+                    case 3:
+                        System.out.println("Exiting the system. Goodbye!");
+                        return;
+                    default:
+                        System.out.println("Invalid choice!");
+                }
+            } else {
+                System.out.println("\nWelcome, " + currentUser);
+                System.out.println("1. Deposit");
+                System.out.println("2. Withdraw");
+                System.out.println("3. Check Balance");
+                System.out.println("4. Logout");
+                System.out.print("Choose an option: ");
+                int choice = scanner.nextInt();
+
+                switch (choice) {
+                    case 1:
+                        System.out.print("Enter amount to deposit: ");
+                        double depositAmount = scanner.nextDouble();
+                        bankingSystem.deposit(currentUser, depositAmount);
+                        break;
+                    case 2:
+                        System.out.print("Enter amount to withdraw: ");
+                        double withdrawAmount = scanner.nextDouble();
+                        bankingSystem.withdraw(currentUser, withdrawAmount);
+                        break;
+                    case 3:
+                        bankingSystem.checkBalance(currentUser);
+                        break;
+                    case 4:
+                        currentUser = null;
+                        System.out.println("Logged out successfully!");
+                        break;
+                    default:
+                        System.out.println("Invalid choice!");
+                }
+            }
+        }
+    }
+}
